@@ -1,29 +1,46 @@
 ﻿@page "/peliculas/crear"
 @inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+@inject SweetAlertService swal
 
 <h3>Crear Película</h3>
 
-<FormularioPeliculas Pelicula="Pelicula" OnValidSubmit="Crear" GenerosNoSeleccionados="GenerosNoSeleccionados"></FormularioPeliculas>
+@if (MostrarFormulario)
+{
+    <FormularioPeliculas Pelicula="Pelicula" OnValidSubmit="Crear" GenerosNoSeleccionados="GenerosNoSeleccionados"></FormularioPeliculas>
+}
+else
+{
+    <p>Cargando...</p>
+}
 
 @code {
     private Pelicula Pelicula = new Pelicula();
     private List<Genero> GenerosNoSeleccionados = new List<Genero>();
+    public bool MostrarFormulario { get; set; } = false;
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        GenerosNoSeleccionados = new List<Genero>()
-        {
-            new Genero() { Id = 1, Nombre = "Comedia" },
-            new Genero() { Id = 2, Nombre = "Drama" },
-            new Genero() { Id = 3, Nombre = "Acción" },
-            new Genero() { Id = 4, Nombre = "Sci-fi" }
-        };
+        var respuestaHTTP = await repositorio.Get<List<Genero>>("api/generos");
+        GenerosNoSeleccionados = respuestaHTTP.Response!;
+        MostrarFormulario = true;
     }
 
-    void Crear()
+    async Task Crear()
     {
-        Console.WriteLine("navigationManager.Uri = " + navigationManager.Uri);
-        Console.WriteLine("navigationManager.BaseUri = " + navigationManager.BaseUri);
-        navigationManager.NavigateTo("pelicula");
+        var httpResponse = await repositorio.Post<Pelicula, int>("api/peliculas", Pelicula);
+
+        if (httpResponse.Error)
+        {
+            var mensajeError = await httpResponse.ObtenerMensajeError();
+            await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+        }
+        else
+        {
+            // Console.WriteLine("navigationManager.Uri = " + navigationManager.Uri);
+            // Console.WriteLine("navigationManager.BaseUri = " + navigationManager.BaseUri);
+            var peliculaId = httpResponse.Response;
+            navigationManager.NavigateTo($"/pelicula/{peliculaId}/{Pelicula.Titulo.Replace(" ", "-")}");
+        }
     }
 }
