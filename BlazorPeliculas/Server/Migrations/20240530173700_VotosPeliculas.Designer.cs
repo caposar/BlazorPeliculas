@@ -4,6 +4,7 @@ using BlazorPeliculas.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorPeliculas.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240530173700_VotosPeliculas")]
+    partial class VotosPeliculas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -400,7 +403,7 @@ namespace BlazorPeliculas.Server.Migrations
             modelBuilder.Entity("BlazorPeliculas.Shared.Entidades.VotoPelicula", b =>
                 {
                     b.HasOne("BlazorPeliculas.Shared.Entidades.Pelicula", "Pelicula")
-                        .WithMany("VotosPeliculas")
+                        .WithMany()
                         .HasForeignKey("PeliculaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -474,8 +477,6 @@ namespace BlazorPeliculas.Server.Migrations
                     b.Navigation("GenerosPelicula");
 
                     b.Navigation("PeliculasActor");
-
-                    b.Navigation("VotosPeliculas");
                 });
 #pragma warning restore 612, 618
         }

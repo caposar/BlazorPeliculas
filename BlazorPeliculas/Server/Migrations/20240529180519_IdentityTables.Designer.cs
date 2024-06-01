@@ -4,6 +4,7 @@ using BlazorPeliculas.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorPeliculas.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240529180519_IdentityTables")]
+    partial class IdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,34 +134,6 @@ namespace BlazorPeliculas.Server.Migrations
                     b.HasIndex("PeliculaId");
 
                     b.ToTable("PeliculasActores");
-                });
-
-            modelBuilder.Entity("BlazorPeliculas.Shared.Entidades.VotoPelicula", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("FechaVoto")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PeliculaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsuarioId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Voto")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PeliculaId");
-
-                    b.ToTable("VotosPeliculas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -397,17 +372,6 @@ namespace BlazorPeliculas.Server.Migrations
                     b.Navigation("Pelicula");
                 });
 
-            modelBuilder.Entity("BlazorPeliculas.Shared.Entidades.VotoPelicula", b =>
-                {
-                    b.HasOne("BlazorPeliculas.Shared.Entidades.Pelicula", "Pelicula")
-                        .WithMany("VotosPeliculas")
-                        .HasForeignKey("PeliculaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pelicula");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -474,8 +438,6 @@ namespace BlazorPeliculas.Server.Migrations
                     b.Navigation("GenerosPelicula");
 
                     b.Navigation("PeliculasActor");
-
-                    b.Navigation("VotosPeliculas");
                 });
 #pragma warning restore 612, 618
         }
